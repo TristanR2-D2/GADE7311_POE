@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -9,6 +10,8 @@ public class GameManager : MonoBehaviour
     private BoardGenerate board;
     GameState state;
     private Colour currentTeam;
+    [Header("UI")]
+    public Text playTurn; public Text playAP;
     [Header("Base Ground")]
     public GameObject grass; public GameObject hill1, hill2, hill3, rock, ruinF, ruinW;
     [Header("Red Highlights")]
@@ -52,55 +55,99 @@ public class GameManager : MonoBehaviour
         foreach (GameObject obj in tiles) { Destroy(obj); }
         GameObject[] play = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject obj in play) { Destroy(obj); }
+        if (state.Colour == Colour.RED)
+            playTurn.color = Color.red;
+        else
+            playTurn.color = Color.blue;
+        playAP.text = "AP: " + state.AP.ToString();
+        playTurn.text = "Current Player: " + state.Colour;
         for (int x = 0; x < board.Width; x++)
         {
             for (int z = 0; z < board.Height; z++)
             {
-                switch (state.boards[x,z].Space)
+                switch (state.boards[x, z].Select)
                 {
-                    case BoardSpace.GRASS: Instantiate(grass, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.HILL1: Instantiate(hill1, new Vector3(x - board.X, 0.25f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.HILL2: Instantiate(hill2, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.HILL3: Instantiate(hill3, new Vector3(x - board.X, 0.75f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.ROCKY: Instantiate(rock, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.RUINFLOOR: Instantiate(ruinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
-                    case BoardSpace.RUINWALL: Instantiate(ruinW, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                    case Selection.NONE:
+                        switch (state.boards[x, z].Space)
+                        {
+                            case BoardSpace.GRASS: Instantiate(grass, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL1: Instantiate(hill1, new Vector3(x - board.X, 0.25f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL2: Instantiate(hill2, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL3: Instantiate(hill3, new Vector3(x - board.X, 0.75f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.ROCKY: Instantiate(rock, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.RUINFLOOR: Instantiate(ruinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.RUINWALL: Instantiate(ruinW, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                        }
+                        break;
+                    case Selection.SELECTRED:
+                        switch (state.boards[x, z].Space)
+                        {
+                            case BoardSpace.GRASS: Instantiate(redGrass, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL1: Instantiate(redHill1, new Vector3(x - board.X, 0.25f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL2: Instantiate(redHill2, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL3: Instantiate(redHill3, new Vector3(x - board.X, 0.75f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.ROCKY: Instantiate(redRock, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.RUINFLOOR: Instantiate(redRuinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                        }
+                        break;
+                    case Selection.SELECTBLUE:
+                        switch (state.boards[x, z].Space)
+                        {
+                            case BoardSpace.GRASS: Instantiate(bluGrass, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL1: Instantiate(bluHill1, new Vector3(x - board.X, 0.25f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL2: Instantiate(bluHill2, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.HILL3: Instantiate(bluHill3, new Vector3(x - board.X, 0.75f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.ROCKY: Instantiate(bluRock, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                            case BoardSpace.RUINFLOOR: Instantiate(bluRuinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                        }
+                        break;
+
                 }
                 if (state.players[x, z] != null)
                 {
-                    if (!state.players[x, z].Spent)
+                    float temp = 1.5f;
+                    if (state.boards[x, z].Space == BoardSpace.HILL1)
+                        temp = 2f;
+                    else if (state.boards[x, z].Space == BoardSpace.HILL2)
+                        temp = 2.5f;
+                    else if (state.boards[x, z].Space == BoardSpace.HILL3)
+                        temp = 3f;
+                    if (state.players[x, z].Alive)
                     {
-                        if (!state.players[x, z].Selected)
+                        if (!state.players[x, z].Spent)
                         {
-                            if (state.players[x, z].Types == Colour.RED)
+                            if (!state.players[x, z].Selected)
                             {
-                                if (state.players[x, z].Piece == PieceType.ARCHER)
-                                    Instantiate(archerRed, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                if (state.players[x, z].Types == Colour.RED)
+                                {
+                                    if (state.players[x, z].Piece == PieceType.ARCHER)
+                                        Instantiate(archerRed, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                    else
+                                        Instantiate(knightRed, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                }
                                 else
-                                    Instantiate(knightRed, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                {
+                                    if (state.players[x, z].Piece == PieceType.ARCHER)
+                                        Instantiate(archerBlue, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                    else
+                                        Instantiate(knightBlue, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                }
                             }
                             else
                             {
                                 if (state.players[x, z].Piece == PieceType.ARCHER)
-                                    Instantiate(archerBlue, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                    Instantiate(archerSelect, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
                                 else
-                                    Instantiate(knightBlue, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                    Instantiate(knightSelect, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
                             }
                         }
                         else
                         {
                             if (state.players[x, z].Piece == PieceType.ARCHER)
-                                Instantiate(archerSelect, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                Instantiate(archerSpent, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
                             else
-                                Instantiate(knightSelect, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                Instantiate(knightSpent, new Vector3(state.players[x, z].PosX - board.X, temp, state.players[x, z].PosY - board.Y), Quaternion.identity);
                         }
-                    }
-                    else
-                    {
-                        if (state.players[x, z].Piece == PieceType.ARCHER)
-                            Instantiate(archerSpent, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
-                        else
-                            Instantiate(knightSpent, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
                     }
                 }
             }
