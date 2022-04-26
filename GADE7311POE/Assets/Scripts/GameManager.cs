@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     [Header("Blue Highlights")]
     public GameObject bluGrass; public GameObject bluHill1, bluHill2, bluHill3, bluRock, bluRuinF;
     [Header("Pieces")]
-    public GameObject archerRed; public GameObject archerBlue, knightRed, knightBlue;
+    public GameObject archerRed; public GameObject archerBlue, knightRed, knightBlue, archerSpent, knightSpent,archerSelect,knightSelect;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,13 +42,16 @@ public class GameManager : MonoBehaviour
 
     public void PassOn(int x, int y, string s)
     {
-        state.PassOn(x, y, s);
+        state.PassOn(x + board.X, y + board.Y, s);
+        Board();
     }
 
     private void Board()
     {
-        //GameObject[] tiles = GameObject.FindGameObjectsWithTag("Tile");
-        //foreach (GameObject obj in tiles) { Destroy(obj); }
+        GameObject[] tiles = GameObject.FindGameObjectsWithTag("TIle");
+        foreach (GameObject obj in tiles) { Destroy(obj); }
+        GameObject[] play = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject obj in play) { Destroy(obj); }
         for (int x = 0; x < board.Width; x++)
         {
             for (int z = 0; z < board.Height; z++)
@@ -63,23 +66,43 @@ public class GameManager : MonoBehaviour
                     case BoardSpace.RUINFLOOR: Instantiate(ruinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
                     case BoardSpace.RUINWALL: Instantiate(ruinW, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
                 }
-            }
-        }
-        foreach (Players player in state.players)
-        {
-            if (player.Types == Colour.RED)
-            {
-                if (player.Piece == PieceType.ARCHER)
-                    Instantiate(archerRed, new Vector3(player.PosX, 1.5f, player.PosY), Quaternion.identity);
-                else
-                    Instantiate(knightRed, new Vector3(player.PosX, 1.5f, player.PosY), Quaternion.identity);
-            }
-            else
-            {
-                if (player.Piece == PieceType.ARCHER)
-                    Instantiate(archerBlue, new Vector3(player.PosX, 1.5f, player.PosY), Quaternion.identity);
-                else
-                    Instantiate(knightBlue, new Vector3(player.PosX, 1.5f, player.PosY), Quaternion.identity);
+                if (state.players[x, z] != null)
+                {
+                    if (!state.players[x, z].Spent)
+                    {
+                        if (!state.players[x, z].Selected)
+                        {
+                            if (state.players[x, z].Types == Colour.RED)
+                            {
+                                if (state.players[x, z].Piece == PieceType.ARCHER)
+                                    Instantiate(archerRed, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                else
+                                    Instantiate(knightRed, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                            }
+                            else
+                            {
+                                if (state.players[x, z].Piece == PieceType.ARCHER)
+                                    Instantiate(archerBlue, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                                else
+                                    Instantiate(knightBlue, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                            }
+                        }
+                        else
+                        {
+                            if (state.players[x, z].Piece == PieceType.ARCHER)
+                                Instantiate(archerSelect, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                            else
+                                Instantiate(knightSelect, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                        }
+                    }
+                    else
+                    {
+                        if (state.players[x, z].Piece == PieceType.ARCHER)
+                            Instantiate(archerSpent, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                        else
+                            Instantiate(knightSpent, new Vector3(state.players[x, z].PosX - board.X, 1.5f, state.players[x, z].PosY - board.Y), Quaternion.identity);
+                    }
+                }
             }
         }
     }
