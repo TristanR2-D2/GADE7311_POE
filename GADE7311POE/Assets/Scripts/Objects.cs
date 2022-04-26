@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class Objects : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private int x, y;
+    void OnMouseDown()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        x = System.Convert.ToInt32(gameObject.transform.position.x);
+        y = System.Convert.ToInt32(gameObject.transform.position.z);
+        if (gameObject != null)
+            GameObject.Find("GameManager").GetComponent<GameManager>().PassOn(x, y, gameObject.tag);
     }
 }

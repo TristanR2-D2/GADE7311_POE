@@ -19,8 +19,8 @@ public class CameraControl : MonoBehaviour
     {
         vertPos += Input.GetAxisRaw("Mouse ScrollWheel") * scrollSpeed;
         vertPos = Mathf.Clamp(vertPos, 0, 6);
-        pivot.transform.position = new Vector3(0, vertPos, 0);
-        Debug.Log(vertPos);
+        //pivot.transform.position = new Vector3(transform.position.x, vertPos, transform.position.z);
+        //Debug.Log(vertPos);
     }
 
     private void FixedUpdate()
