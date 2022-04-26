@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8478321085113373850}
   m_Layer: 0
   m_Name: Hill1Red
-  m_TagString: Hill
+  m_TagString: TIle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
