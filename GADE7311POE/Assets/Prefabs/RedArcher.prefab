@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 6038175100666606411}
   - component: {fileID: 6038175100666606408}
   - component: {fileID: 6038175100666606409}
+  - component: {fileID: -3484435517811798894}
   m_Layer: 0
   m_Name: RedArcher
-  m_TagString: Archer
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,3 +97,15 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3484435517811798894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6038175100666606414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2500b19916c5a184ea9c0f533390e76e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

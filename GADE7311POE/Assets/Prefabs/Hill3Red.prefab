@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5045733698361496572}
   - component: {fileID: 7733055740466359773}
   - component: {fileID: 61372096626387852}
+  - component: {fileID: 4693382406744509694}
   m_Layer: 0
   m_Name: Hill3Red
   m_TagString: TIle
@@ -95,3 +96,15 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4693382406744509694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4072309464959734727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2500b19916c5a184ea9c0f533390e76e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

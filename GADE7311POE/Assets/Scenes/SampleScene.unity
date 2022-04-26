@@ -660,6 +660,10 @@ MonoBehaviour:
   rock: {fileID: 8815186565456906718, guid: cff106787fbfd9e41a0dbf130b79d584, type: 3}
   ruinF: {fileID: 664808688135133845, guid: 5d0437462ac5e02479ad45b2e43f4848, type: 3}
   ruinW: {fileID: 7300704795392661115, guid: 4c26ee28ea73b2f47a0ab039a1bb2b24, type: 3}
+  archerRed: {fileID: 6038175100666606414, guid: b2f5870cb5f3f474ba10ec81d3589548, type: 3}
+  archerBlue: {fileID: 4069452261852169416, guid: 00d3367d18fe34d44bbb0247fabed3e2, type: 3}
+  knightRed: {fileID: 5347277836346721305, guid: 949a96908f8645643a4521bab611e5f1, type: 3}
+  knightBlue: {fileID: 2302482825143603159, guid: 898d99c7a6bd1af4db0355006e56df19, type: 3}
 --- !u!4 &2131753886
 Transform:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ TagManager:
   - Rocks
   - Ruin
   - RuinObstacle
+  - TIle
   layers:
   - Default
   - TransparentFX
