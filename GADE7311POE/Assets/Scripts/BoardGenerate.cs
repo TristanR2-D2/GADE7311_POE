@@ -48,8 +48,8 @@ public class BoardGenerate
     {
         width = w;
         height = h;
-        originX = Mathf.CeilToInt(width / 2);
-        originY = Mathf.CeilToInt(height / 2);
+        originX = Mathf.FloorToInt(width / 2);
+        originY = Mathf.FloorToInt(height / 2);
         tiles = new BoardSpace[width, height];
         CreateBoard(s);
     }

@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
         string[] map = File.ReadAllLines(mapPath);
         Debug.Log(mapPath);
         board = new BoardGenerate(map[0].Length, map.Length, map);
-        GameObject.Find("CameraPivot").transform.position = new Vector3(board.X, 0, board.Y);
+        //GameObject.Find("CameraPivot").transform.position = new Vector3(board.X, 0, board.Y);
         Board();
     }
 
@@ -41,13 +41,13 @@ public class GameManager : MonoBehaviour
             {
                 switch (board.Tiles[x, z])
                 {
-                    case BoardSpace.GRASS: Instantiate(grass, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.HILL1: Instantiate(hill1, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.HILL2: Instantiate(hill2, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.HILL3: Instantiate(hill3, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.ROCKY: Instantiate(rock, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.RUINFLOOR: Instantiate(ruinF, new Vector3(x, 0f, z), Quaternion.identity); break;
-                    case BoardSpace.RUINWALL: Instantiate(ruinW, new Vector3(x, 0f, z), Quaternion.identity); break;
+                    case BoardSpace.GRASS: Instantiate(grass, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.HILL1: Instantiate(hill1, new Vector3(x - board.X, 0.25f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.HILL2: Instantiate(hill2, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.HILL3: Instantiate(hill3, new Vector3(x - board.X, 0.75f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.ROCKY: Instantiate(rock, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.RUINFLOOR: Instantiate(ruinF, new Vector3(x - board.X, 0f, z - board.Y), Quaternion.identity); break;
+                    case BoardSpace.RUINWALL: Instantiate(ruinW, new Vector3(x - board.X, 0.5f, z - board.Y), Quaternion.identity); break;
                 }
             }
         }
