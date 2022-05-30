@@ -49,7 +49,7 @@ public class GameState
         }
         setupPlayers();
     }
-    public GameState(BoardGenerate board, Colour c, PlayerType pt)
+    public GameState(BoardGenerate board, Colour c, PlayerType pt, Difficulty d)
     {
         colour = c;
         primed = false;
@@ -71,14 +71,14 @@ public class GameState
         setupPlayers();
         if (pt == PlayerType.AI)
         {
-            mini = new MiniMaxBrain(players, colour, width, height);
+            mini = new MiniMaxBrain(players, colour, width, height, d);
         }
         else
         {
             if (colour == Colour.RED)
-                mini = new MiniMaxBrain(players, Colour.BLUE, width, height);
+                mini = new MiniMaxBrain(players, Colour.BLUE, width, height, d);
             else
-                mini = new MiniMaxBrain(players, Colour.RED, width, height);
+                mini = new MiniMaxBrain(players, Colour.RED, width, height, d);
         }
     }
 
