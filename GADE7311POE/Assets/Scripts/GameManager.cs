@@ -10,8 +10,11 @@ public class GameManager : MonoBehaviour
     private BoardGenerate board;
     GameState state;
     private Colour currentTeam;
+    private PlayerType playerType;
+    [Header("Game Setup")]
+    public NumPlayers numPlayers; public Difficulty difficulty;
     [Header("UI")]
-    public Text playTurn; public Text playAP;
+    public Text playTurn; public Text playAP, txtEnd, txtSpell1, txtSpell2; public GameObject btnAttack, btnSpell1, btnSpell2, btnEnd;
     [Header("Base Ground")]
     public GameObject grass; public GameObject hill1, hill2, hill3, rock, ruinF, ruinW;
     [Header("Red Highlights")]
@@ -23,6 +26,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        btnAttack.SetActive(false);
+        btnSpell1.SetActive(false);
+        btnSpell2.SetActive(false);
+        btnEnd.SetActive(false);
         int rand = Random.Range(0, 99);
         mapPath = Application.dataPath + "/DefaultMap.txt";
         string[] map = File.ReadAllLines(mapPath);
@@ -33,7 +40,10 @@ public class GameManager : MonoBehaviour
         else
             currentTeam = Colour.BLUE;
         //GameObject.Find("CameraPivot").transform.position = new Vector3(board.X, 0, board.Y);
-        state = new GameState(board, currentTeam);
+        if (numPlayers == NumPlayers.PVP)
+        {
+            state = new GameState(board, currentTeam);
+        }
         Board();
     }
 
@@ -43,9 +53,33 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void ButtonControl(string s)
+    {
+        if(s == "E")
+        {
+            btnAttack.SetActive(false);
+            btnSpell1.SetActive(false);
+            btnSpell2.SetActive(false);
+            btnEnd.SetActive(false);
+        }
+        else
+        {
+            btnAttack.SetActive(true);
+            //btnSpell1.SetActive(true);
+            //btnSpell2.SetActive(true);
+            //btnEnd.SetActive(true);
+        }
+    }
+
     public void PassOn(int x, int y, string s)
     {
         state.PassOn(x + board.X, y + board.Y, s);
+        Board();
+    }
+
+    public void ButtonClick(string s)
+    {
+        state.ButtonClick(s);
         Board();
     }
 

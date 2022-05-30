@@ -23,7 +23,7 @@ public class Players
     private Colour teamColour;
     private CurrentState state;
     private PieceType piece;
-    private bool alive, spent, selected;
+    private bool alive, spent, selected, moved;
     private int health, posX, posY, minRange, maxRange, damage;
 
     public Colour Types
@@ -82,6 +82,11 @@ public class Players
     {
         get { return maxRange; }
     }
+    public bool Moved
+    {
+        get { return moved; }
+        set { moved = value; }
+    }
     public Players(PieceType p, Colour c, int x, int y)
     {
         if (p == PieceType.KNIGHT)
@@ -98,6 +103,7 @@ public class Players
             posY = y;
             selected = false;
             spent = false;
+            moved = false;
         }
         else if (p == PieceType.ARCHER)
         { 
@@ -113,6 +119,7 @@ public class Players
             posY = y;
             selected = false;
             spent = false;
+            moved = false;
         }
     }
 }

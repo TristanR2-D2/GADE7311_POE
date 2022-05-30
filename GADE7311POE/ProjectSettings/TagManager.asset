@@ -13,6 +13,10 @@ TagManager:
   - Ruin
   - RuinObstacle
   - TIle
+  - UIAttack
+  - UISpell1
+  - UISpell2
+  - UIEnd
   layers:
   - Default
   - TransparentFX

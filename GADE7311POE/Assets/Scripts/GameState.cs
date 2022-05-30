@@ -2,13 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerType
+{
+    AI,
+    HUMAN
+}
 public class GameState
 {
     public Players[,] players;
     public BoardState[,] boards;
     private Colour colour;
+    public PlayerType playerType;
     public GameObject playerSelected;
     private int width, height, ap;
+    private bool primed;
     public Colour Colour
     {
         get { return colour; }
@@ -17,9 +24,14 @@ public class GameState
     {
         get { return ap; }
     }
+    public PlayerType PlayerType
+    {
+        get { return playerType; }
+    }
     public GameState(BoardGenerate board, Colour c)
     {
         colour = c;
+        primed = false;
         width = board.Width;
         height = board.Height;
         players = new Players[width, height];
@@ -34,6 +46,32 @@ public class GameState
                 players[i, j] = null;
             }
         }
+        setupPlayers();
+    }
+    public GameState(BoardGenerate board, Colour c, PlayerType pt)
+    {
+        colour = c;
+        primed = false;
+        width = board.Width;
+        height = board.Height;
+        playerType = pt;
+        players = new Players[width, height];
+        boards = new BoardState[width, height];
+        BoardState tempBoard;
+        for (int i = 0; i < board.Width; i++)
+        {
+            for (int j = 0; j < board.Height; j++)
+            {
+                tempBoard = new BoardState(i, j, board.Tiles[i, j]);
+                boards[i, j] = tempBoard;
+                players[i, j] = null;
+            }
+        }
+        setupPlayers();
+    }
+
+    void setupPlayers()
+    {
         for (int i = 0; i <= 1; i++)
         {
             Players tempPlayer = new Players(PieceType.KNIGHT, colour, 2, 12);
@@ -66,6 +104,7 @@ public class GameState
                 colour = Colour.BLUE;
         }
     }
+
     public void PassOn(int x, int y, string s)
     {
         int check, tempX, tempY, count, alive, turn, turnCount;
@@ -101,66 +140,58 @@ public class GameState
         }
         if (s == "Player" && !players[x, y].Spent)
         {
-            ap = 6;
-            int minMovX, maxMovX, minMovY, maxMovY;
+            ap = 5;
             if (players[x, y].Types == colour)
             {
                 if (check == 0)
                 {
                     players[x, y].Selected = true;
-                    minMovX = Mathf.Clamp(x - 6, 0, width);
-                    maxMovX = Mathf.Clamp(x + 6, 0, width);
-                    minMovY = Mathf.Clamp(y - 6, 0, height);
-                    maxMovY = Mathf.Clamp(y + 6, 0, height);
-                    for (int i = minMovX; i < maxMovX; i++)
-                    {
-                        for (int j = minMovY; j < maxMovY; j++)
-                        {
-                            boards[i, j].Selected = true;
-                            float distance = Mathf.Sqrt(Mathf.Pow(i - x, 2) + Mathf.Pow(j - y, 2));
-                            if (distance < 6)
-                            {
-                                if (colour == Colour.RED)
-                                    boards[i, j].Select = Selection.SELECTRED;
-                                else
-                                    boards[i, j].Select = Selection.SELECTBLUE;
-                            }
-                        }
-                    }
+                    buildMoves(x, y, 0, 0);
                 }
-                else if(check > 0 && players[x, y].Selected)
+                else if (check > 0 && players[x, y].Selected)
                 {
                     players[x, y].Selected = false;
-                    for (int i = 0; i < width; i++)
-                    {
-                        for (int j = 0; j < height; j++)
-                        {
-                            boards[i, j].Selected = false;
-                            boards[i, j].Select = Selection.NONE;
-
-                        }
-                    }
+                    clearBoard();
                 }
             }
         }
+        if (s == "Player" && primed)
+        {
+            if (players[x, y].Types != colour)
+            {
+                players[tempX, tempY].Selected = false;
+                players[x, y].Health = 0;
+                players[x, y].Alive = false;
+                players[tempX, tempY].Spent = true;
+                players[x, y].Selected = false;
+                clearBoard();
+                GameObject.Find("GameManager").GetComponent<GameManager>().ButtonControl("E");
+                primed = false;
+            }
+        }
 
-        if(s == "TIle" && boards[x, y].Selected)
+        if (s == "TIle" && boards[x, y].Selected && !primed)
         {
             int distance = Mathf.FloorToInt(Mathf.Sqrt(Mathf.Pow(tempX - x, 2) + Mathf.Pow(tempY - y, 2)));
             ap -= distance;
             players[x, y] = players[tempX, tempY];
             players[x, y].PosX = x;
             players[x, y].PosY = y;
-            players[x, y].Selected = false;
-            players[x, y].Spent = true;
+            players[x, y].Moved = true;
             players[tempX, tempY] = null;
-            for (int i = 0; i < width; i++)
+            clearBoard();
+            if (ap <= 0)
             {
-                for (int j = 0; j < height; j++)
-                {
-                    boards[i, j].Selected = false;
-                    boards[i, j].Select = Selection.NONE;
-                }
+                players[x, y].Spent = true;
+                players[x, y].Selected = false;
+            }
+            else
+            {
+                buildMoves(x, y, 0, 0);
+                if(players[x, y].Piece == PieceType.ARCHER)
+                    GameObject.Find("GameManager").GetComponent<GameManager>().ButtonControl("A");
+                else
+                    GameObject.Find("GameManager").GetComponent<GameManager>().ButtonControl("K");
             }
             //Debug.Log(count);
             //Debug.Log(turn);
@@ -187,6 +218,121 @@ public class GameState
                     colour = Colour.BLUE;
                 else
                     colour = Colour.RED;
+            }
+        }
+    }
+
+    void clearBoard()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                boards[i, j].Selected = false;
+                boards[i, j].Select = Selection.NONE;
+            }
+        }
+    }
+
+    public void ButtonClick(string s)
+    {
+        if(s == "Attack")
+        {
+            int checker = 0; int x = 0; int y = 0;
+            for (int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    if (players[i, j] != null)
+                    {
+                        if (players[i, j].Selected)
+                        {
+                            x = i;
+                            y = j;
+                        }
+                        else
+                        {
+                            /*int minMovX, minMovY, maxMovX, maxMovY;
+                            minMovX = Mathf.Clamp(x - ap, 0, width);
+                            maxMovX = Mathf.Clamp(x + ap + 1, 0, width);
+                            minMovY = Mathf.Clamp(y - ap, 0, height);
+                            maxMovY = Mathf.Clamp(y + ap + 1, 0, height);*/
+                            float distance = Mathf.Sqrt(Mathf.Pow(i - x, 2) + Mathf.Pow(j - y, 2));
+                            if (distance < ap)
+                            {
+                                if (colour == Colour.RED)
+                                    if (players[i, j].Types == Colour.BLUE)
+                                        checker++;
+                                    else
+                                    if (players[i, j].Types == Colour.RED)
+                                        checker++;
+                            }
+                        }
+                    }
+                }
+            }
+            Debug.Log(x + " " + y);
+            if (checker > 0)
+            {
+                primed = true;
+                buildMoves(x, y, players[x, y].MinRange, players[x, y].MaxRange);
+            }
+            else
+            {
+                players[x, y].Spent = true;
+                players[x, y].Selected = false;
+                clearBoard();
+                GameObject.Find("GameManager").GetComponent<GameManager>().ButtonControl("E");
+            }
+        }
+    }
+
+    void buildMoves(int x, int y, int nr, int xr)
+    {
+        if (nr == 0)
+        {
+            int minMovX, maxMovX, minMovY, maxMovY;
+            minMovX = Mathf.Clamp(x - ap, 0, width);
+            maxMovX = Mathf.Clamp(x + ap + 1, 0, width);
+            minMovY = Mathf.Clamp(y - ap, 0, height);
+            maxMovY = Mathf.Clamp(y + ap + 1, 0, height);
+            for (int i = minMovX; i < maxMovX; i++)
+            {
+                for (int j = minMovY; j < maxMovY; j++)
+                {
+                    boards[i, j].Selected = true;
+                    float distance = Mathf.Sqrt(Mathf.Pow(i - x, 2) + Mathf.Pow(j - y, 2));
+                    if (distance <= ap)
+                    {
+                        if (colour == Colour.RED)
+                            boards[i, j].Select = Selection.SELECTRED;
+                        else
+                            boards[i, j].Select = Selection.SELECTBLUE;
+                    }
+                }
+            }
+        }
+        else
+        {
+            int minMovX, maxMovX, minMovY, maxMovY;
+            minMovX = Mathf.Clamp(x - xr, 0, width);
+            maxMovX = Mathf.Clamp(x + xr + 1, 0, width);
+            minMovY = Mathf.Clamp(y - xr, 0, height);
+            maxMovY = Mathf.Clamp(y + xr + 1, 0, height);
+            for (int i = minMovX; i < maxMovX; i++)
+            {
+                for (int j = minMovY; j < maxMovY; j++)
+                {
+                    boards[i, j].Selected = true;
+                    float distance = Mathf.Sqrt(Mathf.Pow(i - x, 2) + Mathf.Pow(j - y, 2));
+                    if (distance <= xr && distance >= nr)
+                    {
+                        if (colour == Colour.RED)
+                            boards[i, j].Select = Selection.SELECTRED;
+                        else
+                            boards[i, j].Select = Selection.SELECTBLUE;
+                    }
+                }
             }
         }
     }
