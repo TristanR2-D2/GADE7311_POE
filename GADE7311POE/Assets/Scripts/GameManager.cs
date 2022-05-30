@@ -53,6 +53,22 @@ public class GameManager : MonoBehaviour
         
     }
 
+     public void playerVAI()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+
+    public void playerVPlayer()
+    {
+        SceneManager.LoadScene("GameScene"); 
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+
     public void ButtonControl(string s)
     {
         if(s == "E")

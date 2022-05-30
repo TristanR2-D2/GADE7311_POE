@@ -49,6 +49,7 @@ public class MiniMaxBrain
         topScore = int.MinValue;
         scores = new int[w,h];
     }
+    
 
     public void doMove(int x, int y, Players[,] p, int ap)
     {
