@@ -1665,6 +1665,13 @@ MonoBehaviour:
   difficulty: 1
   playTurn: {fileID: 545760670}
   playAP: {fileID: 207683010}
+  txtEnd: {fileID: 496395773}
+  txtSpell1: {fileID: 1672299743}
+  txtSpell2: {fileID: 774305566}
+  btnAttack: {fileID: 2139237754}
+  btnSpell1: {fileID: 944249221}
+  btnSpell2: {fileID: 2060113982}
+  btnEnd: {fileID: 1458133901}
   grass: {fileID: 8710557302012656948, guid: 9c225d9d388d84c4680ae52046984e1c, type: 3}
   hill1: {fileID: 916804729227239545, guid: ef35446ddef3738418727469d9e5d2ee, type: 3}
   hill2: {fileID: 2984942485286327343, guid: 1d6702c0f30b74d48af499a9026ec99b, type: 3}
