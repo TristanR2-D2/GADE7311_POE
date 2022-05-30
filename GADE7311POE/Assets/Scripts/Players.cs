@@ -74,6 +74,7 @@ public class Players
     {
         get { return piece; }
     }
+    public Colour TeamColour { get { return teamColour; } }
     public int MinRange
     {
         get { return minRange; }

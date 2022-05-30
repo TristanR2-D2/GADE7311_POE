@@ -14,6 +14,7 @@ public class GameState
     private Colour colour;
     public PlayerType playerType;
     public GameObject playerSelected;
+    private MiniMaxBrain mini;
     private int width, height, ap;
     private bool primed;
     public Colour Colour
@@ -68,6 +69,17 @@ public class GameState
             }
         }
         setupPlayers();
+        if (pt == PlayerType.AI)
+        {
+            mini = new MiniMaxBrain(players, colour, width, height);
+        }
+        else
+        {
+            if (colour == Colour.RED)
+                mini = new MiniMaxBrain(players, Colour.BLUE, width, height);
+            else
+                mini = new MiniMaxBrain(players, Colour.RED, width, height);
+        }
     }
 
     void setupPlayers()
